@@ -2,89 +2,53 @@ package com.interviewprep.backend.config;
 
 import com.interviewprep.backend.model.Question;
 import com.interviewprep.backend.repository.QuestionRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
     private final QuestionRepository questionRepository;
+
+    public DataSeeder(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
+    }
 
     @Override
     public void run(String... args) {
         if (questionRepository.count() == 0) {
             questionRepository.saveAll(List.of(
-                question("What is an Array?",
-                    "An array is a collection of elements stored at contiguous memory locations.",
-                    "DSA", "Easy", "Technical", "TCS"),
-                question("Explain Binary Search",
-                    "Binary search finds an element by repeatedly dividing the search interval in half.",
-                    "DSA", "Medium", "Technical", "Infosys"),
-                question("What is a Linked List?",
-                    "A linked list is a linear data structure where elements are stored in nodes.",
-                    "DSA", "Easy", "Technical", "Wipro"),
-                question("Explain Stack and Queue",
-                    "Stack follows LIFO, Queue follows FIFO principle.",
-                    "DSA", "Easy", "Technical", "TCS"),
-                question("What is a Binary Tree?",
-                    "A binary tree is a tree where each node has at most two children.",
-                    "DSA", "Medium", "Technical", "Google"),
-                question("Explain Bubble Sort",
-                    "Bubble sort repeatedly swaps adjacent elements if they are in wrong order.",
-                    "DSA", "Easy", "Technical", "Infosys"),
-                question("What is Dynamic Programming?",
-                    "DP solves complex problems by breaking them into simpler subproblems.",
-                    "DSA", "Hard", "Technical", "Amazon"),
-                question("Explain HashMap",
-                    "HashMap stores key-value pairs and provides O(1) average time complexity.",
-                    "DSA", "Medium", "Technical", "Microsoft"),
-                question("What is Recursion?",
-                    "Recursion is when a function calls itself to solve smaller instances of a problem.",
-                    "DSA", "Medium", "Technical", "Google"),
-                question("Explain Graph BFS and DFS",
-                    "BFS explores level by level, DFS explores as far as possible before backtracking.",
-                    "DSA", "Hard", "Technical", "Amazon"),
-                question("Tell me about yourself",
-                    "Structure: Present, Past, Future. Keep it under 2 minutes.",
-                    "HR", "Easy", "HR", "TCS"),
-                question("What are your strengths?",
-                    "Pick 2-3 strengths relevant to the job with examples.",
-                    "HR", "Easy", "HR", "Infosys"),
-                question("What are your weaknesses?",
-                    "Pick a real weakness and explain how you are improving it.",
-                    "HR", "Easy", "HR", "Wipro"),
-                question("Why do you want to join our company?",
-                    "Research the company and align their values with your goals.",
-                    "HR", "Medium", "HR", "Google"),
-                question("Where do you see yourself in 5 years?",
-                    "Show ambition but stay realistic and aligned with the company.",
-                    "HR", "Medium", "HR", "Microsoft"),
-                question("Explain OOP concepts",
-                    "OOP has 4 pillars: Encapsulation, Inheritance, Polymorphism, Abstraction.",
-                    "Java", "Medium", "Technical", "TCS"),
-                question("What is the difference between JDK, JRE and JVM?",
-                    "JVM runs bytecode, JRE includes JVM + libraries, JDK includes JRE + dev tools.",
-                    "Java", "Easy", "Technical", "Infosys"),
-                question("What is Spring Boot?",
-                    "Spring Boot is a framework that simplifies Spring application development.",
-                    "Java", "Medium", "Technical", "Wipro"),
-                question("Explain REST API",
-                    "REST is an architectural style using HTTP methods: GET, POST, PUT, DELETE.",
-                    "Java", "Medium", "Technical", "Amazon"),
-                question("What is MongoDB?",
-                    "MongoDB is a NoSQL database that stores data in JSON-like documents.",
-                    "Database", "Easy", "Technical", "Microsoft")
+                q("What is an Array?", "An array stores elements at contiguous memory locations. Access is O(1), insertion is O(n).", "DSA", "Easy", "Technical", "TCS"),
+                q("Explain Binary Search", "Binary search divides the search interval in half each step. Time complexity is O(log n).", "DSA", "Medium", "Technical", "Infosys"),
+                q("What is a Linked List?", "A linked list stores elements in nodes connected by pointers. No random access, insertion is O(1).", "DSA", "Easy", "Technical", "Wipro"),
+                q("Explain Stack and Queue", "Stack follows LIFO (Last In First Out). Queue follows FIFO (First In First Out).", "DSA", "Easy", "Technical", "TCS"),
+                q("What is a Binary Tree?", "A binary tree is a hierarchical structure where each node has at most two children: left and right.", "DSA", "Medium", "Technical", "Google"),
+                q("Explain Bubble Sort", "Bubble sort repeatedly compares and swaps adjacent elements. Time complexity is O(n^2).", "DSA", "Easy", "Technical", "Infosys"),
+                q("What is Dynamic Programming?", "DP breaks problems into overlapping subproblems and stores results to avoid recomputation.", "DSA", "Hard", "Technical", "Amazon"),
+                q("Explain HashMap", "HashMap stores key-value pairs using hashing. Average time complexity for get/put is O(1).", "DSA", "Medium", "Technical", "Microsoft"),
+                q("What is Recursion?", "Recursion is when a function calls itself. Needs a base case to stop. Uses call stack memory.", "DSA", "Medium", "Technical", "Google"),
+                q("Explain BFS and DFS", "BFS explores level by level using a queue. DFS explores depth-first using a stack or recursion.", "DSA", "Hard", "Technical", "Amazon"),
+                q("Tell me about yourself", "Structure your answer: 1) Current role/education, 2) Past experience, 3) Future goals. Keep it 90 seconds.", "HR", "Easy", "HR", "TCS"),
+                q("What are your strengths?", "Pick 2-3 job-relevant strengths. Back each with a specific example using STAR method.", "HR", "Easy", "HR", "Infosys"),
+                q("What are your weaknesses?", "Name a real weakness. Show self-awareness and explain the concrete steps you are taking to improve.", "HR", "Easy", "HR", "Wipro"),
+                q("Why do you want to join us?", "Research the company values, products, and culture. Align them with your own career goals.", "HR", "Medium", "HR", "Google"),
+                q("Where do you see yourself in 5 years?", "Show growth ambition within the company. Avoid saying you want their job or plan to leave.", "HR", "Medium", "HR", "Microsoft"),
+                q("Explain OOP concepts", "OOP has 4 pillars: Encapsulation (data hiding), Inheritance (reuse), Polymorphism (many forms), Abstraction (hide complexity).", "Java", "Medium", "Technical", "TCS"),
+                q("What is JDK vs JRE vs JVM?", "JVM executes bytecode. JRE = JVM + libraries. JDK = JRE + compiler + development tools.", "Java", "Easy", "Technical", "Infosys"),
+                q("What is Spring Boot?", "Spring Boot auto-configures Spring apps, removes boilerplate, and provides embedded servers like Tomcat.", "Java", "Medium", "Technical", "Wipro"),
+                q("Explain REST API", "REST uses HTTP methods: GET (read), POST (create), PUT (update), DELETE (remove). Stateless architecture.", "Java", "Medium", "Technical", "Amazon"),
+                q("What is MongoDB?", "MongoDB is a NoSQL database storing data as BSON documents. Schema-flexible and horizontally scalable.", "Database", "Easy", "Technical", "Microsoft")
             ));
-            System.out.println("20 questions seeded successfully!");
+            System.out.println("✅ 20 questions seeded successfully!");
+        } else {
+            System.out.println("✅ Questions already exist, skipping seed.");
         }
     }
 
-    private Question question(String title, String description,
-            String topic, String difficulty, String type, String company) {
+    private Question q(String title, String description, String topic,
+                       String difficulty, String type, String company) {
         Question q = new Question();
         q.setTitle(title);
         q.setDescription(description);
@@ -92,6 +56,7 @@ public class DataSeeder implements CommandLineRunner {
         q.setDifficulty(difficulty);
         q.setType(type);
         q.setCompany(company);
+        q.setAnswer(description);
         return q;
     }
 }

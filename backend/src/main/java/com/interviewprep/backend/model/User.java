@@ -3,6 +3,7 @@ package com.interviewprep.backend.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDate;
 
 import lombok.Data;
 
@@ -21,6 +22,13 @@ public class User {
     private String password;
 
     private String role = "USER";
+
+    private String resetToken;
+    private Long resetTokenExpiry;
+
+    private int currentStreak = 0;
+    private int longestStreak = 0;
+    private LocalDate lastChallengeDate;
 
     public User() {
     }
@@ -71,6 +79,46 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public Long getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(Long resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
+    }
+
+    public int getCurrentStreak() {
+        return currentStreak;
+    }
+
+    public void setCurrentStreak(int currentStreak) {
+        this.currentStreak = currentStreak;
+    }
+
+    public int getLongestStreak() {
+        return longestStreak;
+    }
+
+    public void setLongestStreak(int longestStreak) {
+        this.longestStreak = longestStreak;
+    }
+
+    public LocalDate getLastChallengeDate() {
+        return lastChallengeDate;
+    }
+
+    public void setLastChallengeDate(LocalDate lastChallengeDate) {
+        this.lastChallengeDate = lastChallengeDate;
     }
 }
 

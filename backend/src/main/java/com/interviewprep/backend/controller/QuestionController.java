@@ -2,49 +2,53 @@ package com.interviewprep.backend.controller;
 
 import com.interviewprep.backend.model.Question;
 import com.interviewprep.backend.repository.QuestionRepository;
-import lombok.RequiredArgsConstructor;
+import com.interviewprep.backend.service.QuestionGeneratorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/questions")
-@RequiredArgsConstructor
 public class QuestionController {
 
     private final QuestionRepository questionRepository;
+    private final QuestionGeneratorService questionGeneratorService;
+
+    public QuestionController(QuestionRepository questionRepository, QuestionGeneratorService questionGeneratorService) {
+        this.questionRepository = questionRepository;
+        this.questionGeneratorService = questionGeneratorService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Question>> getQuestions(
+    public List<Question> getQuestions(
             @RequestParam(required = false) String topic,
             @RequestParam(required = false) String difficulty,
-            @RequestParam(required = false) String type,
             @RequestParam(required = false) String company) {
 
         if (topic != null && difficulty != null) {
-            return ResponseEntity.ok(
-                questionRepository.findByTopicAndDifficulty(topic, difficulty));
+            return questionRepository.findByTopicAndDifficulty(topic, difficulty);
         } else if (topic != null) {
-            return ResponseEntity.ok(
-                questionRepository.findByTopic(topic));
+            return questionRepository.findByTopic(topic);
         } else if (difficulty != null) {
-            return ResponseEntity.ok(
-                questionRepository.findByDifficulty(difficulty));
-        } else if (type != null) {
-            return ResponseEntity.ok(
-                questionRepository.findByType(type));
+            return questionRepository.findByDifficulty(difficulty);
         } else if (company != null) {
-            return ResponseEntity.ok(
-                questionRepository.findByCompany(company));
+            return questionRepository.findByCompany(company);
         }
-
-        return ResponseEntity.ok(questionRepository.findAll());
+        return questionRepository.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<Question> addQuestion(
-            @RequestBody Question question) {
-        return ResponseEntity.ok(questionRepository.save(question));
+    public Question addQuestion(@RequestBody Question question) {
+        return questionRepository.save(question);
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<Map<String, String>> generateQuestion(@RequestBody Map<String, String> request) {
+        String topic = request.getOrDefault("topic", "JavaScript");
+        String difficulty = request.getOrDefault("difficulty", "Medium");
+        Map<String, String> result = questionGeneratorService.generate(topic, difficulty);
+        return ResponseEntity.ok(result);
     }
 }

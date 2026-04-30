@@ -21,7 +21,10 @@ public class InterviewController {
         String prompt = "You are a technical interviewer. Ask me one clear " + topic +
                 " interview question. Just ask the question directly, no intro needed.";
         String question = ollamaService.generate(prompt);
-        return Map.of("question", question);
+        String answerPrompt = "You are an expert interview coach. Give a concise, high-quality sample answer " +
+                "for this " + topic + " interview question:\n\"" + question + "\"";
+        String answer = ollamaService.generate(answerPrompt);
+        return Map.of("question", question, "answer", answer);
     }
 
     @PostMapping("/answer")
