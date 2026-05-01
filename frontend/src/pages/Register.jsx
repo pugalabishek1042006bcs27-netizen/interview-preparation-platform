@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import API from '../services/api'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
@@ -34,7 +34,7 @@ const Register = () => {
     }
     setSendingOtp(true)
     try {
-      await axios.post('http://localhost:8082/api/auth/send-registration-otp', { email })
+      await API.post('/auth/send-registration-otp', { email })
       toast.success('OTP sent to your email!')
       setOtpSent(true)
       startTimer()
@@ -50,7 +50,7 @@ const Register = () => {
     setLoading(true)
 
     try {
-      await axios.post('http://localhost:8082/api/auth/register', {
+      await API.post('/auth/register', {
         name,
         email,
         password,

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import axios from 'axios'
+import API from '../services/api'
 import Editor from '@monaco-editor/react'
 import Navbar from '../components/Navbar'
 import { toast } from 'react-hot-toast'
@@ -64,7 +64,7 @@ const CodePlayground = () => {
     try {
       setLoading(true)
       setOutput('Executing remote runtime...')
-      const response = await axios.post('http://localhost:8082/api/code/execute', {
+      const response = await API.post('/code/execute', {
         language,
         code,
         stdin: input

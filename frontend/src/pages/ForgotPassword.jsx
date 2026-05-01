@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import API from '../services/api'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
@@ -16,7 +16,7 @@ const ForgotPassword = () => {
         setLoading(true)
 
         try {
-            const { data } = await axios.post('http://localhost:8082/api/auth/forgot-password', { email })
+            const { data } = await API.post('/auth/forgot-password', { email })
             
             // Backend no longer returns a demoCode. It actually sends a real email.
             toast.success(data.message || 'Check your inbox! We have sent an email containing your 6-digit secure code.')
@@ -33,7 +33,7 @@ const ForgotPassword = () => {
         setLoading(true)
 
         try {
-            const { data } = await axios.post('http://localhost:8082/api/auth/reset-password', {
+            const { data } = await API.post('/auth/reset-password', {
                 email,
                 token,
                 newPassword

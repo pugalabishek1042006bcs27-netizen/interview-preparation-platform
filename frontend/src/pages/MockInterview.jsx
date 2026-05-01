@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
+import API from '../services/api'
 import Navbar from '../components/Navbar'
 import toast from 'react-hot-toast'
 
@@ -127,7 +127,7 @@ const MockInterview = () => {
   const startInterview = async () => {
     try {
       setLoading(true)
-      const response = await axios.post('http://localhost:8082/api/mock/start', { topic: selectedTopic })
+      const response = await API.post('/mock/start', { topic: selectedTopic })
       const qText = response.data?.question || 'Tell me about yourself.'
       setQuestion(qText)
       setAnswer('')
@@ -148,7 +148,7 @@ const MockInterview = () => {
     }
     try {
       setLoading(true)
-      const response = await axios.post('http://localhost:8082/api/mock/feedback', {
+      const response = await API.post('/mock/feedback', {
         topic: selectedTopic,
         question,
         answer

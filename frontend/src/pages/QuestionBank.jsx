@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import axios from 'axios'
+import API from '../services/api'
 import Navbar from '../components/Navbar'
 
 const questions = [
@@ -116,8 +116,8 @@ const QuestionBank = () => {
       setLoading(true)
       setShowAiAnswer(false)
 
-      const response = await axios.post(
-        'http://localhost:8082/api/questions/generate',
+      const response = await API.post(
+        '/questions/generate',
         {
           topic: aiTopic,
           difficulty: selectedDifficulty === 'All' ? 'Medium' : selectedDifficulty
