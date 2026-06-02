@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class QuestionGeneratorService {
@@ -38,6 +39,12 @@ public class QuestionGeneratorService {
             requestBody.put("model", modelName);
             requestBody.put("prompt", prompt);
             requestBody.put("stream", false);
+            requestBody.put("options", Map.of(
+                    "temperature", 0.9,
+                    "top_p", 0.95,
+                    "repeat_penalty", 1.15,
+                    "seed", ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE)
+            ));
 
             String response = restTemplate.postForObject(ollamaApiUrl, requestBody, String.class);
             
@@ -49,20 +56,43 @@ public class QuestionGeneratorService {
                 }
             }
         } catch (RestClientException e) {
-            return buildFallbackQuestion(topic, difficulty);
+            return buildOllamaUnavailableResponse();
         } catch (Exception e) {
-            return buildFallbackQuestion(topic, difficulty);
+            return buildOllamaUnavailableResponse();
         }
         
-        return buildFallbackQuestion(topic, difficulty);
+        return buildOllamaUnavailableResponse();
     }
 
     private String buildPrompt(String topic, String difficulty) {
+        String[] focusAreas = {
+                "debugging a real bug",
+                "explaining a production trade-off",
+                "designing a small feature",
+                "optimizing existing code",
+                "comparing two implementation choices",
+                "handling an edge case"
+        };
+        String focusArea = focusAreas[ThreadLocalRandom.current().nextInt(focusAreas.length)];
+        String[] interviewStyles = {
+                "frontend engineer screen",
+                "backend engineer screen",
+                "product-company technical round",
+                "startup coding discussion",
+                "senior engineer concept check",
+                "system troubleshooting round"
+        };
+        String interviewStyle = interviewStyles[ThreadLocalRandom.current().nextInt(interviewStyles.length)];
+
         return "Generate a single " + difficulty + " level interview question about " + topic + ".\n\n" +
                "Format your response EXACTLY like this:\n" +
                "QUESTION: [The interview question]\n" +
                "ANSWER: [A concise answer explanation]\n\n" +
-               "Make the question practical and relevant to a real interview.";
+               "Make the question practical and relevant to real interview questions candidates see online.\n" +
+               "Use this fresh angle: " + focusArea + ".\n" +
+               "Interview style: " + interviewStyle + ".\n" +
+               "Do not repeat a standard textbook question or your previous response.\n" +
+               "Variation id: " + UUID.randomUUID();
     }
 
     private Map<String, String> parseGeneratedQuestion(String generatedText) {
@@ -92,89 +122,10 @@ public class QuestionGeneratorService {
         return result;
     }
 
-    private Map<String, String> buildFallbackQuestion(String topic, String difficulty) {
-        String normalizedTopic = getTopics().contains(topic) ? topic : "JavaScript";
-        String normalizedDifficulty = Set.of("Easy", "Medium", "Hard").contains(difficulty)
-                ? difficulty
-                : "Medium";
-
-        Map<String, String> fallback = fallbackQuestions().getOrDefault(
-                normalizedTopic + ":" + normalizedDifficulty,
-                fallbackQuestions().getOrDefault(normalizedTopic + ":Medium", fallbackQuestions().get("JavaScript:Medium"))
-        );
-
+    private Map<String, String> buildOllamaUnavailableResponse() {
         return Map.of(
-                "question", fallback.get("question"),
-                "answer", fallback.get("answer")
-        );
-    }
-
-    private Map<String, Map<String, String>> fallbackQuestions() {
-        return Map.ofEntries(
-                Map.entry("JavaScript:Easy", Map.of(
-                        "question", "What is the difference between var, let, and const in JavaScript?",
-                        "answer", "var is function-scoped and can be re-declared, while let and const are block-scoped. let can be reassigned, but const cannot be reassigned after initialization."
-                )),
-                Map.entry("JavaScript:Medium", Map.of(
-                        "question", "Explain closures in JavaScript and describe one practical use case.",
-                        "answer", "A closure lets an inner function keep access to variables from its outer scope after that outer function has finished. It is commonly used for callbacks, function factories, and private state."
-                )),
-                Map.entry("JavaScript:Hard", Map.of(
-                        "question", "How does the JavaScript event loop coordinate microtasks and macrotasks?",
-                        "answer", "The call stack runs synchronous code first. After a macrotask completes, queued microtasks such as promise callbacks run before rendering and before the next macrotask, which affects ordering and responsiveness."
-                )),
-                Map.entry("React:Medium", Map.of(
-                        "question", "When would you use useMemo, useCallback, or React.memo in a React application?",
-                        "answer", "Use them when referential stability or expensive recalculation affects rendering cost. They are most useful around expensive derived values, stable callback props, and memoized child components."
-                )),
-                Map.entry("Java:Medium", Map.of(
-                        "question", "What is the difference between an interface and an abstract class in Java?",
-                        "answer", "Interfaces define capabilities a class can implement, while abstract classes can share state and partial implementation. A class can implement multiple interfaces but extend only one class."
-                )),
-                Map.entry("Python:Medium", Map.of(
-                        "question", "What are Python decorators, and how would you use one in a real project?",
-                        "answer", "A decorator wraps a function to add behavior without changing the function body. Common uses include logging, authorization checks, caching, and timing."
-                )),
-                Map.entry("C++:Medium", Map.of(
-                        "question", "Explain RAII in C++ and why it helps prevent resource leaks.",
-                        "answer", "RAII binds resource ownership to object lifetime. Constructors acquire resources and destructors release them, so cleanup happens predictably when objects leave scope."
-                )),
-                Map.entry("DSA:Medium", Map.of(
-                        "question", "How would you detect a cycle in a linked list?",
-                        "answer", "Use Floyd's two-pointer algorithm. Move one pointer one step and another two steps; if they meet, a cycle exists. If the fast pointer reaches null, there is no cycle."
-                )),
-                Map.entry("Operating Systems:Medium", Map.of(
-                        "question", "What is the difference between a process and a thread?",
-                        "answer", "A process has its own memory space and resources, while threads share the process memory. Threads are lighter to create but need synchronization when sharing mutable data."
-                )),
-                Map.entry("Computer Networks:Medium", Map.of(
-                        "question", "What happens during a TCP three-way handshake?",
-                        "answer", "The client sends SYN, the server responds with SYN-ACK, and the client replies with ACK. This establishes sequence numbers and confirms both sides can send and receive."
-                )),
-                Map.entry("Database:Medium", Map.of(
-                        "question", "What is database indexing, and what trade-offs does it introduce?",
-                        "answer", "Indexes speed up reads by creating faster lookup structures, but they consume storage and can slow writes because index entries must be maintained."
-                )),
-                Map.entry("Spring Boot:Medium", Map.of(
-                        "question", "How does dependency injection work in Spring Boot?",
-                        "answer", "Spring creates and manages beans in an application context, then injects dependencies through constructors, fields, or setters. Constructor injection is usually preferred for required dependencies."
-                )),
-                Map.entry("Machine Learning:Medium", Map.of(
-                        "question", "What is overfitting, and how can you reduce it?",
-                        "answer", "Overfitting happens when a model learns training noise instead of general patterns. It can be reduced with more data, regularization, cross-validation, simpler models, and early stopping."
-                )),
-                Map.entry("System Design:Medium", Map.of(
-                        "question", "How would you design a rate limiter for an API?",
-                        "answer", "Choose a strategy such as token bucket or sliding window, store counters in a fast shared system like Redis, define limits per user or key, and return clear retry information."
-                )),
-                Map.entry("Web:Medium", Map.of(
-                        "question", "What is the difference between client-side rendering and server-side rendering?",
-                        "answer", "Client-side rendering builds the UI in the browser after JavaScript loads. Server-side rendering sends ready HTML from the server, often improving first load and SEO."
-                )),
-                Map.entry("Backend:Medium", Map.of(
-                        "question", "What makes an API idempotent, and why does it matter?",
-                        "answer", "An idempotent operation produces the same result when repeated with the same input. It matters for retries, network failures, and predictable distributed systems behavior."
-                ))
+                "question", "Ollama is not available right now.",
+                "answer", "Start Ollama and make sure the selected model is installed, then click Generate AI Question again."
         );
     }
 
