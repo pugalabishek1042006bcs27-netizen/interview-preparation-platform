@@ -1,0 +1,27 @@
+# Build Outputs
+**/target/
+**/build/
+**/dist/
+
+# Dependencies
+**/node_modules/
+
+# Local configuration / Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db

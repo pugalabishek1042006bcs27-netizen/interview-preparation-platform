@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -29,6 +31,14 @@ public class User {
     private int currentStreak = 0;
     private int longestStreak = 0;
     private LocalDate lastChallengeDate;
+
+    // Performance tracking fields
+    private int totalMockInterviews = 0;
+    private double averageScore = 0.0;
+    private int questionsSolved = 0;
+    private List<Map<String, Object>> recentActivity;
+    private List<Map<String, Object>> performanceHistory;
+    private Map<String, Object> skillAnalysis;
 
     public User() {
     }
@@ -119,6 +129,54 @@ public class User {
 
     public void setLastChallengeDate(LocalDate lastChallengeDate) {
         this.lastChallengeDate = lastChallengeDate;
+    }
+
+    public int getTotalMockInterviews() {
+        return totalMockInterviews;
+    }
+
+    public void setTotalMockInterviews(int totalMockInterviews) {
+        this.totalMockInterviews = totalMockInterviews;
+    }
+
+    public double getAverageScore() {
+        return averageScore;
+    }
+
+    public void setAverageScore(double averageScore) {
+        this.averageScore = averageScore;
+    }
+
+    public int getQuestionsSolved() {
+        return questionsSolved;
+    }
+
+    public void setQuestionsSolved(int questionsSolved) {
+        this.questionsSolved = questionsSolved;
+    }
+
+    public List<Map<String, Object>> getRecentActivity() {
+        return recentActivity;
+    }
+
+    public void setRecentActivity(List<Map<String, Object>> recentActivity) {
+        this.recentActivity = recentActivity;
+    }
+
+    public List<Map<String, Object>> getPerformanceHistory() {
+        return performanceHistory;
+    }
+
+    public void setPerformanceHistory(List<Map<String, Object>> performanceHistory) {
+        this.performanceHistory = performanceHistory;
+    }
+
+    public Map<String, Object> getSkillAnalysis() {
+        return skillAnalysis;
+    }
+
+    public void setSkillAnalysis(Map<String, Object> skillAnalysis) {
+        this.skillAnalysis = skillAnalysis;
     }
 }
 
