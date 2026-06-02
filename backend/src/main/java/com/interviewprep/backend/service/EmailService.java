@@ -20,9 +20,11 @@ public class EmailService {
 
     private void sendViaGoogleScript(String to, String subject, String body) {
         if (googleScriptUrl == null || googleScriptUrl.isEmpty()) {
-            System.err.println("Google Script URL is missing! Cannot send email to: " + to);
-            System.err.println("Email Subject: " + subject);
-            System.err.println("Email Body: \n" + body);
+            System.out.println("Google Script URL is missing (development mode)");
+            System.out.println("Email to: " + to);
+            System.out.println("Email Subject: " + subject);
+            System.out.println("Email Body: \n" + body);
+            System.out.println("In production, configure google.script.url in application.properties");
             return;
         }
 
