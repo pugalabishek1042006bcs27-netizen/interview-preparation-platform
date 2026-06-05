@@ -2,12 +2,12 @@ package com.interviewprep.backend.controller;
 
 import com.interviewprep.backend.model.User;
 import com.interviewprep.backend.repository.UserRepository;
+import java.time.LocalDate;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/progress")
@@ -18,21 +18,36 @@ public class ProgressController {
 
     @GetMapping("/stats")
     public ResponseEntity<?> getUserStats() {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = (String) SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getPrincipal();
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
 
-        List<Map<String, Object>> performanceHistory = user.getPerformanceHistory();
+        // Reset streak if user missed completing the daily challenge yesterday or earlier
+        LocalDate today = LocalDate.now();
+        LocalDate lastChallenge = user.getLastChallengeDate();
+        if (
+            lastChallenge != null &&
+            lastChallenge.isBefore(today.minusDays(1)) &&
+            user.getCurrentStreak() > 0
+        ) {
+            user.setCurrentStreak(0);
+            userRepository.save(user);
+        }
+
+        List<Map<String, Object>> performanceHistory =
+            user.getPerformanceHistory();
         if (performanceHistory == null) performanceHistory = new ArrayList<>();
-        
+
         Map<String, Object> skillAnalysis = user.getSkillAnalysis();
         if (skillAnalysis == null) {
             skillAnalysis = generateEmptySkillAnalysis();
         }
-        
+
         List<Map<String, Object>> recentActivity = user.getRecentActivity();
         if (recentActivity == null) recentActivity = new ArrayList<>();
 
