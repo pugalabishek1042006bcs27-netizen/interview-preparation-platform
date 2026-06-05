@@ -43,6 +43,7 @@ public class QuestionGeneratorService {
                     "temperature", 0.9,
                     "top_p", 0.95,
                     "repeat_penalty", 1.15,
+                    "num_predict", 180,
                     "seed", ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE)
             ));
 
@@ -87,7 +88,7 @@ public class QuestionGeneratorService {
         return "Generate a single " + difficulty + " level interview question about " + topic + ".\n\n" +
                "Format your response EXACTLY like this:\n" +
                "QUESTION: [The interview question]\n" +
-               "ANSWER: [A concise answer explanation]\n\n" +
+               "ANSWER: [A concise 2-3 sentence answer explanation]\n\n" +
                "Make the question practical and relevant to real interview questions candidates see online.\n" +
                "Use this fresh angle: " + focusArea + ".\n" +
                "Interview style: " + interviewStyle + ".\n" +
