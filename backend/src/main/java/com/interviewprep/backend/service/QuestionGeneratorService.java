@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -14,6 +16,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class QuestionGeneratorService {
 
+    private static final Logger log = LoggerFactory.getLogger(
+        QuestionGeneratorService.class
+    );
     private static final String GROQ_URL =
         "https://api.groq.com/openai/v1/chat/completions";
 
@@ -29,6 +34,12 @@ public class QuestionGeneratorService {
     ) {
         this.apiKey = apiKey;
         this.modelName = modelName;
+        log.info(
+            "Groq API key configured: {}",
+            (apiKey != null && !apiKey.isBlank())
+                ? "YES (length=" + apiKey.length() + ")"
+                : "NO - KEY IS MISSING"
+        );
 
         SimpleClientHttpRequestFactory requestFactory =
             new SimpleClientHttpRequestFactory();
