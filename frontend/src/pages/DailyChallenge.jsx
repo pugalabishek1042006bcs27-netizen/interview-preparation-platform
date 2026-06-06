@@ -136,7 +136,7 @@ const DailyChallenge = () => {
                 className="section-copy"
                 style={{ marginBottom: "24px", fontSize: "1.1rem" }}
               >
-                Explain your approach to solve the problem stated above.
+                Think carefully and write your own answer below.
               </div>
 
               {!completedToday ? (
@@ -164,13 +164,6 @@ const DailyChallenge = () => {
                       style={{ width: "auto", paddingInline: "40px" }}
                     >
                       {submitting ? "Verifying..." : "Submit Solution"}
-                    </button>
-
-                    <button
-                      onClick={() => setShowAnswer(!showAnswer)}
-                      className="button-secondary"
-                    >
-                      {showAnswer ? "Hide Sample" : "View Sample Answer"}
                     </button>
                   </div>
                 </div>
