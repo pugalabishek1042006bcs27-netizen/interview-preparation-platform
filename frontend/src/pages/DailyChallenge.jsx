@@ -136,8 +136,7 @@ const DailyChallenge = () => {
                 className="section-copy"
                 style={{ marginBottom: "24px", fontSize: "1.1rem" }}
               >
-                {challenge?.description ||
-                  "Explain your approach to solve the problem stated above."}
+                Explain your approach to solve the problem stated above.
               </div>
 
               {!completedToday ? (
